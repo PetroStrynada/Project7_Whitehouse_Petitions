@@ -18,11 +18,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
 
+        // first tab item added in storyboard here added 2 more tab items
         if let tabBarController = window?.rootViewController as? UITabBarController {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            let vc = storyboard.instantiateViewController(withIdentifier: "NavController")
-            vc.tabBarItem = UITabBarItem(tabBarSystemItem: .topRated, tag: 1)
-            tabBarController.viewControllers?.append(vc)
+            let topRated = storyboard.instantiateViewController(withIdentifier: "NavController")
+            let recent = storyboard.instantiateViewController(identifier: "NavController")
+            topRated.tabBarItem = UITabBarItem(tabBarSystemItem: .topRated, tag: 1)
+            recent.tabBarItem = UITabBarItem(tabBarSystemItem: .recents, tag: 2)
+            tabBarController.viewControllers?.append(topRated)
+            tabBarController.viewControllers?.append(recent)
         }
     }
 

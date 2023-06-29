@@ -9,29 +9,46 @@ import UIKit
 
 class ViewController: UITableViewController {
     var petitions = [Petition]()
+    var filteredPetitions = [Petition]()
+    var urlString = ""
+    let urlForRecentPetitions = "recentPetitions"
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let urlString: String
-
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .bookmarks, target: self, action: #selector(showDataURL))
 
         if navigationController?.tabBarItem.tag == 0 {
             // urlString = "https://api.whitehouse.gov/v1/petitions.json?limit=100"
             urlString = "https://www.hackingwithswift.com/samples/petitions-1.json"
-        } else {
+        } else if navigationController?.tabBarItem.tag == 1 {
             // urlString = "https://api.whitehouse.gov/v1/petitions.json?signatureCountFloor=10000&limit=100"
             urlString = "https://www.hackingwithswift.com/samples/petitions-2.json"
+        } else if navigationController?.tabBarItem.tag == 2 {
+            urlString = urlForRecentPetitions
+        } else {
+            urlString = ""
         }
+
 
         if let url = URL(string: urlString) {
             if let data = try? Data(contentsOf: url) {
                 parse(json: data)
+                filteredPetitions = petitions
                 return
             }
         }
 
         showError()
+
+
+    }
+
+    @objc func showDataURL() {
+        let ac = UIAlertController(title: "Dada comes from", message: urlString, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .cancel)
+        ac.addAction(okAction)
+        present(ac, animated: true)
     }
 
     func showError() {
@@ -54,7 +71,6 @@ class ViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-
         let petition = petitions[indexPath.row]
         cell.textLabel?.text = petition.title
         cell.detailTextLabel?.text = petition.body
